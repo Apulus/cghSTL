@@ -62,12 +62,16 @@ namespace CGH{
 		typedef simple_alloc<pointer, Alloc>		map_allocator; // cghDeque管控中心（map）的空间配置器
 	public:
 		/*
-		构造函数
+			构造函数
 		*/
 		cghDeque(int n, const value_type& value) :start(), finish(), map(0), map_size(0)
 		{
 			fill_initialize(n, value);
 		}
+		/*
+			默认构造函数
+		*/
+		cghDeque() :start(), finish(), map(0), map_size(0) { fill_initialize(0, 0); }
 	protected:
 
 		/*
