@@ -87,7 +87,7 @@ namespace CGH
 		{
 			if (start)
 			{
-				data_allocator::deallocate(start, end_of_storage - start);
+				data_allocator::deallocate(start);
 			}
 		}
 		#pragma endregion
@@ -195,6 +195,132 @@ namespace CGH
 			--finish;
 			destroy(finish);
 			return position;
+		}
+
+		/* 从position开始，插入n个元素，元素初值为x */
+		void insert(iterator position, size_type n, const T& x)
+		{
+			if (n != 0) // 当n != 0 时才插入
+			{
+				if (size_type(end_of_storage - finish) >= n) // 备用空间大于新增元素个数
+				{
+					T x_copy = x;
+					const size_type elems_after = finish - position;
+					iterator old_finish = finish;
+					if (elems_after > n)
+					{
+						uninitialized_copy(finish - n, finish, finish);
+						finish += n;
+						copy_backward(position, old_finish - n, old_finish);
+						fill(position, position + n, x_copy);
+					}
+					else
+					{
+						uninitialized_fill_n(finish, n - elems_after, x_copy);
+						finish += n - elems_after;
+						uninitialized_copy(position, old_finish, finish);
+						finish += elems_after;
+						fill(position, old_finish, x_copy);
+					}
+				}
+				else
+				{
+					const size_type old_size = size();
+					const size_type len = old_size + max(old_size, n);
+					iterator new_start = data_allocator::allocate(len);
+					iterator new_finish = new_start;
+					new_finish = uninitialized_copy(start, position, new_start);
+					new_finish = uninitialized_fill_n(new_finish, n, x);
+					new_finish = uninitialized_copy(position, finish, new_finish);
+					destroy(start, finish);
+					deallocate();
+					start = new_start;
+					finish = new_finish;
+					end_of_storage = new_start + len;
+				}
+			}
+		}
+
+		void swap(cghVector<T, Alloc>& __x) {
+			std::swap(start, __x.start);
+			std::swap(finish, __x.finish);
+			std::swap(end_of_storage, __x.end_of_storage);
+		}
+		#pragma endregion
+
+		#pragma region heap
+		inline void make_heap(iterator first, iterator last)
+		{
+			if (last - first < 2)return;
+			difference_type len = last - first;
+			difference_type parent = len / 2;
+			while (true)
+			{
+				_adjust_heap(first, parent, len, T(*(first + parent)));
+				if (parent == 0)return;
+				--parent;
+			}
+		}
+
+		inline void push_heap(iterator first, iterator last)
+		{
+			difference_type holeIndex = last - first - 1;
+			difference_type topIndex = 0;
+			T value = T(*(last - 1));
+			_push_heap(first, holeIndex, topIndex, value);
+		}
+
+		inline void pop_heap(iterator first, iterator last)
+		{
+			__pop_heap(first, last - 1, last - 1, T(*(last - 1)));
+		}
+
+		inline void sort_heap(iterator first, iterator last)
+		{
+			while (last - first > 1)
+			{
+				pop_heap(first, last -- );
+			}
+		}
+	protected:
+		void __pop_heap(iterator first, iterator last, iterator result, T value)
+		{
+			*result = *first;
+			_adjust_heap(first, difference_type(0), difference_type(last - first), value);
+		}
+
+		void _adjust_heap(iterator first, difference_type holeIndex, difference_type len, T value)
+		{
+			difference_type topIndex = holeIndex;
+			difference_type secondChild = 2 * holeIndex + 2;
+			while (secondChild < len)
+			{
+				if (*(first + secondChild) < *(first + (secondChild - 1)))
+				{
+					--secondChild;
+				}
+				*(first + holeIndex) = *(first + secondChild);
+				holeIndex = secondChild;
+				secondChild = 2 * (secondChild + 1);
+			}
+			if (secondChild == len)
+			{
+				*(first + holeIndex) = *(first + (secondChild - 1));
+				holeIndex = secondChild - 1;
+			}
+			_push_heap(first, holeIndex, topIndex, value);
+		}
+
+		void _push_heap(iterator first, difference_type holeIndex, difference_type topIndex, T value)
+		{
+			difference_type parent = (holeIndex - 1) / 2;
+			while (holeIndex>topIndex && *(first + parent) < value)
+			{
+				*(first + holeIndex) = *(first + parent);
+				holeIndex = parent;
+				parent = (holeIndex - 1) / 2;
+			}
+			*(first + holeIndex) = value;
 		}
 		#pragma endregion
 	};
