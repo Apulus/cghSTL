@@ -7,8 +7,6 @@
 *  内容:cgh_hash_table的实现
 ******************************************************************/
 
-#ifndef _CGH_HASH_TABLE_
-#define _CGH_HASH_TABLE_
 
 #include "globalConstruct.h" // 全局构造与析构函数
 #include "cghAlloc.h" // 空间配置器
@@ -18,6 +16,8 @@
 #include "cghUtil.h" // 工具类
 #include <algorithm> // 需要用到算法
 
+#ifndef _CGH_HASH_TABLE_
+#define _CGH_HASH_TABLE_
 namespace CGH{
 	/*
 		value：		节点的实值类型
@@ -108,7 +108,9 @@ namespace CGH{
 
 		#pragma endregion
 		
-		#pragma region 提供给用户的工具函数
+		#pragma region 提供给用户的API
+
+			#pragma region 读操作
 
 	public:
 		/* 返回当前bucket的总数 */
@@ -175,44 +177,11 @@ namespace CGH{
 			return result;
 		}
 
-		#pragma endregion
+			#pragma endregion
 
-		#pragma region 给定键值，计算bucket
+			#pragma region 写操作
 
-		/*
-			对于hash_table而言，最重要的就是确定key对应的bucket，这是hash faction的责任
-			我们把hash faction封装一层，由下面四个函数调用hash faction
-		*/
-	public:
-		/* 接受实值和buckets个数 */
-		size_type bkt_num(const value_type& obj, size_type n)
-		{
-			return bkt_num_key(get_key(obj), n);
-		}
-
-		/* 只接受实值 */
-		size_type bkt_num(const value_type& obj)
-		{
-			return bkt_num_key(get_key(obj));
-		}
-
-		/* 只接受键值 */
-		size_type bkt_num_key(const key_type& key)
-		{
-			return bkt_num_key(key, buckets.size());
-		}
-
-		/* 接受键值和buckets个数 */
-		size_type bkt_num_key(const key_type& key, size_type n)
-		{
-			return hash(key) % n; // 调用hash faction，返回bucket
-		}
-
-		#pragma endregion
-
-		#pragma region cgh_hash_table的插入操作
-
-			#pragma region 用户接口
+				#pragma region 用户接口
 	public:
 		/* 插入元素，不允许键值重复 */
 		cghPair<iterator, bool> insert_unique(const value_type& obj)
@@ -228,19 +197,19 @@ namespace CGH{
 			return insert_equal_noresize(obj); // 调用辅助函数
 		}
 
-			#pragma endregion
+#pragma endregion
 
-			#pragma region 辅助函数
+				#pragma region 辅助函数
 	private:
 		/* 是否需要重建表格 */
 		void resize(size_type num_elements_hint)
 		{
 			/*
-				判断重建表格的原则：
-				比较元素个数（计入新增元素）和bucket vector的大小
-				元素个数 > bucket vector的大小 => 重建表格
-				由此可知，每个bucket（list）的最大容量和bucket vector的大小相同
-				是一个 n * n 的矩阵
+			判断重建表格的原则：
+			比较元素个数（计入新增元素）和bucket vector的大小
+			元素个数 > bucket vector的大小 => 重建表格
+			由此可知，每个bucket（list）的最大容量和bucket vector的大小相同
+			是一个 n * n 的矩阵
 			*/
 			const size_type old_n = buckets.size(); // 获得bucket vector的大小
 			if (num_elements_hint > old_n) // 如果 元素个数 > bucket vector的大小，我们就要重建表格
@@ -309,7 +278,41 @@ namespace CGH{
 			++num_elements; // 节点数加1
 			return iterator(tmp, this); // 返回结果
 		}
-			#pragma endregion 
+#pragma endregion 
+			#pragma endregion
+
+		#pragma endregion
+
+		#pragma region 给定键值，计算bucket
+
+		/*
+			对于hash_table而言，最重要的就是确定key对应的bucket，这是hash faction的责任
+			我们把hash faction封装一层，由下面四个函数调用hash faction
+		*/
+	public:
+		/* 接受实值和buckets个数 */
+		size_type bkt_num(const value_type& obj, size_type n)
+		{
+			return bkt_num_key(get_key(obj), n);
+		}
+
+		/* 只接受实值 */
+		size_type bkt_num(const value_type& obj)
+		{
+			return bkt_num_key(get_key(obj));
+		}
+
+		/* 只接受键值 */
+		size_type bkt_num_key(const key_type& key)
+		{
+			return bkt_num_key(key, buckets.size());
+		}
+
+		/* 接受键值和buckets个数 */
+		size_type bkt_num_key(const key_type& key, size_type n)
+		{
+			return hash(key) % n; // 调用hash faction，返回bucket
+		}
 
 		#pragma endregion
 	};
