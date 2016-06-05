@@ -12,10 +12,10 @@
 
 #include "ListNode.h"
 #include <memory>
-
+#include "cghSTL_iterator.h"
 namespace CGH{
 	template<class T, class Ref, class Ptr>
-	struct __list_iterator
+	struct __list_iterator : public bidirectional_iterator<T, ptrdiff_t>
 	{
 		typedef __list_iterator<T, T&, T*>		iterator;
 		typedef __list_iterator<T, Ref, Ptr>	self;
