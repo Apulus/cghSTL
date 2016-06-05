@@ -1,3 +1,14 @@
+/*******************************************************************
+*  Copyright(c) 2016 Chen Gonghao
+*  All rights reserved.
+*
+*  chengonghao@yeah.net
+*
+*  文件内容：equal、fill、fill_n、iter_sawp、max、min、
+			 lexicographical_compare、mismatch、copy 算法的实现
+******************************************************************/
+
+
 #ifndef _CGH_STL_ALGOBASE_
 #define _CGH_STL_ALGOBASE_
 
@@ -220,9 +231,9 @@ namespace CGH{
 
 }
 
-#pragma region copy
-
 namespace CGH{
+	#pragma region copy
+
 	template<class InputIterator, class OutputIterator>
 	inline OutputIterator copy(InputIterator first, InputIterator last, OutputIterator result)
 	{
@@ -307,8 +318,8 @@ namespace CGH{
 	{
 		return _copy_d(first, last, result, (ptrdiff_t*)0);
 	}
-}
 
-#pragma endregion
+	#pragma endregion
+}
 
 #endif
