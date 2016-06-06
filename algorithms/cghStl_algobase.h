@@ -234,26 +234,37 @@ namespace CGH{
 namespace CGH{
 	#pragma region copy
 
+#pragma region copy 算法入口
+
+	/* copy 算法唯一的对外接口（完全泛化版）*/
 	template<class InputIterator, class OutputIterator>
 	inline OutputIterator copy(InputIterator first, InputIterator last, OutputIterator result)
 	{
 		return copy_dispatch<InputIterator, OutputIterator>()(first, last, result);
 	}
 
-#pragma region copy的特化版（specialization）
+	#pragma region copy的特化版（specialization）
+
+	/* copy 算法针对const char* 版本的特化版 */
 	inline char* copy(const char* first, const char* last, char* result)
 	{
-		memmove(result, first, last - first) ;
+		// 采用 memmove 的方式直接复制数据，cgh_memmove 函数位于 cghUtil.h 文件
+		cgh_memmove(result, first, last - first) ;
 		return result + (last - first) ;
 	}
 
+	/* copy 算法针对const wchar_t* 版本的特化版 */
 	inline wchar_t* copy(const wchar_t* first, const wchar_t* last, wchar_t* result)
 	{
-		memmove(result, first, sizeof(wchar_t) * (last - first)) ;
+		// 采用 memmove 的方式直接复制数据，cgh_memmove 函数位于 cghUtil.h 文件
+		cgh_memmove(result, first, sizeof(wchar_t) * (last - first)) ;
 		return result + (last - first) ;
 	}
+	#pragma endregion
+
 #pragma endregion
 
+#pragma region copy_dispatch
 	template<class InputIterator, class OutputIterator>
 	struct copy_dispatch{
 		InputIterator operator()(InputIterator first, InputIterator last, OutputIterator result)
@@ -262,27 +273,48 @@ namespace CGH{
 		}
 	};
 
+	#pragma region copy_dispatch 的偏特化版本
+
+	/*
+		在参数为原生指针的情况下，进一步探测指针指向的对象是否具有 trivial assignment operator
+		assignment operator 对效率的影响不小
+		1.如果指针指向的对象具有 non-trivial assignment operator，复制操作就必须通过 trivial assignment operator 进行
+		2.如果指针指向的对象具有 trivial assignment operator，我们完全可以通过最快的内存拷贝（memmove进行）
+	*/
 	template<class T>
 	struct copy_dispatch<T*, T*>{
 		T* operator()(T* first, T* last, T* result)
 		{
+			// 通过特性萃取机（cghSTL_type_traits），获得对象 assignment operator 类型
 			typedef typename cghSTL_type_traits<T>::has_trivial_assignment_operator	t;
 			return _copy_t(first, last, result, t());
 		}
 	};
 
+	/*
+		在参数为原生指针的情况下，进一步探测指针指向的对象是否具有 trivial assignment operator
+		assignment operator 对效率的影响不小
+		1.如果指针指向的对象具有 non-trivial assignment operator，复制操作就必须通过 trivial assignment operator 进行
+		2.如果指针指向的对象具有 trivial assignment operator，我们完全可以通过最快的内存拷贝（memmove进行）
+	*/
 	template<class T>
 	struct copy_dispatch<const T*, T*>{
 		T* operator()(T* first, T* last, T* result)
 		{
+			// 通过特性萃取机（cghSTL_type_traits），获得对象 assignment operator 类型
 			typedef typename cghSTL_type_traits<T>::has_trivial_assignment_operator	t;
 			return _copy_t(first, last, result, t());
 		}
 	};
 
+	#pragma endregion
+
+#pragma endregion
+
 	template<class InputIterator, class OutputIterator>
 	inline OutputIterator _copy(InputIterator first, InputIterator last, OutputIterator result, CGH::input_iterator_tag)
 	{
+		// 以迭代器是否到达末尾，决定循环结束，速度慢
 		for (; first != last; ++result, ++first)
 		{
 			*result = *first ;
@@ -296,27 +328,30 @@ namespace CGH{
 		return _copy_d(first, last, result, distance_type(first)) ;
 	}
 
+	/* 如果对象拥有 non-trivial assignment operator 那么直接进行内存拷贝 */
+	template<class T>
+	inline T* _copy_t(const T* first, const T* last, T* result, true_type)
+	{
+		cgh_memmove(result, first, sizeof(T) * (last - first)) ;
+		return result + (last - first) ;
+	}
+
+	/* 如果对象拥有 trivial assignment operator 那么调用_copy_d，用自定义的 assignment operator，挨个对象拷贝 */
+	template<class T>
+	inline T* _copy_t(const T* first, const T* last, T* result, false_type)
+	{
+		return _copy_d(first, last, result, (ptrdiff_t*)0);
+	}
+
 	template<class RandomAccessIterator, class OutputIterator, class Distance>
 	inline OutputIterator _copy_d(RandomAccessIterator first, RandomAccessIterator last, OutputIterator result, Distance*)
 	{
+		// 以 n 决定循环次数，速度比用迭代器决定循环次数更高效
 		for (Distance n = last - first; n > 0; --n, ++result, ++first)
 		{
 			*result = *first ;
 		}
 		return result ;
-	}
-
-	template<class T>
-	inline T* _copy_t(const T* first, const T* last, T* result, true_type)
-	{
-		memmove(result, first, sizeof(T) * (last - first)) ;
-		return result + (last - first) ;
-	}
-
-	template<class T>
-	inline T* _copy_t(const T* first, const T* last, T* result, false_type)
-	{
-		return _copy_d(first, last, result, (ptrdiff_t*)0);
 	}
 
 	#pragma endregion
