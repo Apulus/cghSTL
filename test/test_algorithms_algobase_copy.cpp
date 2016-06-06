@@ -4,7 +4,7 @@
 *
 *  chengonghao@yeah.net
 *
-*  文件内容：cghStl_algobase.h 中的数值算法的测试
+*  文件内容：cghStl_algobase.h 中的copy的测试
 ******************************************************************/
 
 #include "stdafx.h"
