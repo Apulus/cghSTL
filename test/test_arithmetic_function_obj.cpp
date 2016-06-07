@@ -22,8 +22,9 @@
 //	divides<int> dividesObj;
 //	modulus<int> modulusObj;
 //	negate<int> nagateObj;
-//
-//	std::cout << "************************ 测试函数对象1 ***************************" << std::endl << std::endl;
+//	std::cout << std::endl;
+//	std::cout << "算术类函数对象共5个：plus、minus、multiplies、divides、modulus、negate" << std::endl << std::endl;
+//	std::cout << "************************ 测试算术类函数对象1 ***************************" << std::endl << std::endl;
 //
 //	std::cout << "plusObj(3, 5) = " << plusObj(3, 5) << std::endl << std::endl;
 //	std::cout << "minusObj(3, 5) = " << minusObj(3, 5) << std::endl << std::endl;
@@ -32,7 +33,7 @@
 //	std::cout << "modulusObj(3, 5) = " << modulusObj(3, 5) << std::endl << std::endl;
 //	std::cout << "nagateObj(3) = " << nagateObj(3) << std::endl << std::endl;
 //
-//	std::cout << "************************* 测试函数对象2 **************************" << std::endl << std::endl;
+//	std::cout << "************************* 测试算术类函数对象2 **************************" << std::endl << std::endl;
 //
 //	std::cout << "plus<int>()(3, 5) = " << plus<int>()(3, 5) << std::endl << std::endl;
 //	std::cout << "minus<int>()(3, 5) = " << minus<int>()(3, 5) << std::endl << std::endl;

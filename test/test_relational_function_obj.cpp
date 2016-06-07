@@ -23,7 +23,9 @@
 //	less<int> less_obj;
 //	less_equal<int> less_equal_obj;
 //
-//	std::cout << "************************ 测试函数对象1 ***************************" << std::endl << std::endl;
+//	std::cout << std::endl;
+//	std::cout << "关系类函数对象共5个：equal_to、not_equal_to、greater 、\n\t\t\tgreater_equal、less、less_equal" << std::endl << std::endl;
+//	std::cout << "************************ 测试关系类函数对象1 ***************************" << std::endl << std::endl;
 //
 //	std::cout << "equal_to_obj(3, 5) = " << equal_to_obj(3, 5) << std::endl << std::endl;
 //	std::cout << "not_equal_to_obj(3, 5) = " << not_equal_to_obj(3, 5) << std::endl << std::endl;
@@ -32,7 +34,7 @@
 //	std::cout << "less_obj(3, 5) = " << less_obj(3, 5) << std::endl << std::endl;
 //	std::cout << "less_equal_obj(3, 5) = " << less_equal_obj(3, 5) << std::endl << std::endl;
 //
-//	std::cout << "************************* 测试函数对象2 **************************" << std::endl << std::endl;
+//	std::cout << "************************* 测试关系类函数对象2 **************************" << std::endl << std::endl;
 //
 //	std::cout << "equal_to<int>()(3, 5) = " << equal_to<int>()(3, 5) << std::endl << std::endl;
 //	std::cout << "not_equal_to<int>()(3, 5) = " << not_equal_to<int>()(3, 5) << std::endl << std::endl;
