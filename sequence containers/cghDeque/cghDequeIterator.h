@@ -155,7 +155,7 @@ namespace CGH{
 		self operator-(difference_type n)const
 		{
 			self tmp = *this;
-			return tnp -= n;
+			return tmp -= n;
 		}
 
 		difference_type operator-(const self& x)
