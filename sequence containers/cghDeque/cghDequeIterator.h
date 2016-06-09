@@ -11,10 +11,12 @@
 #define _CGH_DEQUE_ITERATOR_
 
 #include <memory>
+#include "cghSTL_iterator.h"
 namespace CGH{
 
 	template<class T, class Ref, class Ptr, size_t BufSiz>
-	struct __deque_iterator{
+	struct __deque_iterator : public random_access_iterator<T, ptrdiff_t>
+	{
 
 		#pragma region typedef和成员变量的定义
 
