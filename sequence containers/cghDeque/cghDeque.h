@@ -178,9 +178,7 @@ namespace CGH{
 
 	public:
 
-		/*
-			在cghDeque尾部插入元素
-		*/
+		/* 在cghDeque尾部插入元素 */
 		void push_back(const value_type& t)
 		{
 			// 缓冲区是前闭后开的区间，finish迭代器的last元素做哨兵
@@ -196,9 +194,7 @@ namespace CGH{
 			}
 		}
 		
-		/*
-			在cghDeque头部插入元素
-		*/
+		/* 在cghDeque头部插入元素 */
 		void push_front(const value_type& t)
 		{
 			// 如果没有到达缓冲区头部，说明缓冲区前半部分有剩余，直接插入
@@ -214,9 +210,7 @@ namespace CGH{
 			}
 		}
 
-		/*
-			从cghDeque尾部弹出元素
-		*/
+		/* 从cghDeque尾部弹出元素 */
 		void pop_back()
 		{
 			// 如果没有到达finish迭代器的头部，直接destroy
@@ -231,9 +225,7 @@ namespace CGH{
 			}
 		}
 
-		/*
-			从cghDeque头部弹出元素
-		*/
+		/* 从cghDeque头部弹出元素 */
 		void pop_front()
 		{
 			// 如果没有到达start迭代器的尾，直接destroy
@@ -248,12 +240,10 @@ namespace CGH{
 			}
 		}
 
-		/*
-			清除cghDeque的所有元素
-		*/
+		/* 清除cghDeque的所有元素 */
 		void clear()
 		{
-			// [start.node, finish.node]是满员的，所以先清除[start.node, finish.node]这段缓冲区的元素
+			// [start.node + 1, finish.node)是满员的，所以先清除[start.node + 1, finish.node)这段缓冲区的元素
 			for (map_pointer node = start.node + 1; node < finish.node; ++node)
 			{
 				destroy(*node, *node + buffer_size());
@@ -272,11 +262,31 @@ namespace CGH{
 			}
 			finish = start; // 不要忘了！
 		}
+
+		/* 插入元素到指定位置 */
+		iterator insert(iterator position, const value_type& x)
+		{
+			// 如果是在deque的最前端插入, 那么直接push_front()即可  
+			if (position.cur == start.cur) {
+				push_front(x);
+				return start;
+			}
+			// 如果是在deque的末尾插入, 直接调用push_back()  
+			else if (position.cur == finish.cur) {
+				push_back(x);
+				iterator tmp = finish;
+				--tmp;
+				return tmp;
+			}
+			else {
+				return insert_aux(position, x); // 如果插入在中间，调用 insert_aux
+			}
+		}
+
+
 	protected:
 
-		/*
-			缓冲区溢出时的后插
-		*/
+		/* 缓冲区溢出时的后插 */
 		void push_back_aux(const value_type& t)
 		{
 			value_type t_copy = t;
@@ -286,9 +296,7 @@ namespace CGH{
 			finish.cur = finish.first; // 重置finish迭代器的游标
 		}
 
-		/*
-			缓冲区溢出时的前插
-		*/
+		/* 缓冲区溢出时的前插 */
 		void push_front_aux(const value_type& t)
 		{
 			value_type t_copy = t;
@@ -298,9 +306,7 @@ namespace CGH{
 			construct(start.cur, t_copy); // 构造元素
 		}
 
-		/*
-			缓冲区溢出时的后删
-		*/
+		/* 缓冲区溢出时的后删 */
 		void pop_back_aux()
 		{
 			deallocate_node(finish.first); // 释放内存
@@ -309,15 +315,43 @@ namespace CGH{
 			destroy(finish.cur); // 析构上一个缓冲区的最后一个元素
 		}
 
-		/*
-			缓冲区溢出时的前删
-		*/
+		/* 缓冲区溢出时的前删 */
 		void pop_front_aux()
 		{
 			destroy(start.cur); // 析构元素
 			deallocate_node(start.first); // 释放内存
 			start.set_node(start.node + 1); // 下一个缓冲区
 			start.cur = start.first; // 重置游标
+		}
+
+		/* 插入操作非辅助函数 */
+		iterator insert_aux(iterator pos, const value_type& x)
+		{
+			difference_type index = pos - start;
+			value_type x_copy = x;
+
+			if (index < size() / 2) { // 如果待插入的位置小于总长度的一半
+				push_front(front());
+				iterator front1 = start;
+				++front1;
+				iterator front2 = front1;
+				++front2;
+				pos = start + index;
+				iterator pos1 = pos;
+				++pos1;
+				copy(front2, pos1, front1);
+			}
+			else {
+				push_back(back());
+				iterator back1 = finish;
+				--back1;
+				iterator back2 = back1;
+				--back2;
+				pos = start + index;
+				copy_backward(pos, back2, back1);
+			}
+			*pos = x_copy;
+			return pos;
 		}
 
 		#pragma endregion
