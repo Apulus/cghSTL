@@ -10,8 +10,6 @@
 #ifndef _CGH_ITERATOR_ADAPTERS_H_
 #define _CGH_ITERATOR_ADAPTERS_H_
 
-#include "cghSTL_iterator.h"
-
 namespace CGH{
 
 	#pragma region cgh_back_insert_iterator
