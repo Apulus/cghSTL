@@ -234,7 +234,7 @@ namespace CGH{
 namespace CGH{
 	#pragma region copy
 
-#pragma region copy 算法入口
+#pragma region 第一层：copy 算法入口
 
 	/* copy 算法唯一的对外接口（完全泛化版）*/
 	template<class InputIterator, class OutputIterator>
@@ -264,10 +264,11 @@ namespace CGH{
 
 #pragma endregion
 
-#pragma region copy_dispatch
+#pragma region 第二层：copy_dispatch
+
 	template<class InputIterator, class OutputIterator>
 	struct copy_dispatch{
-		InputIterator operator()(InputIterator first, InputIterator last, OutputIterator result)
+		OutputIterator operator()(InputIterator first, InputIterator last, OutputIterator result)
 		{
 			return _copy(first, last, result, CGH::iterator_category(first));
 		}
@@ -311,6 +312,7 @@ namespace CGH{
 
 #pragma endregion
 
+#pragma region 第三层
 	template<class InputIterator, class OutputIterator>
 	inline OutputIterator _copy(InputIterator first, InputIterator last, OutputIterator result, CGH::input_iterator_tag)
 	{
@@ -353,6 +355,7 @@ namespace CGH{
 		}
 		return result ;
 	}
+#pragma endregion
 
 	#pragma endregion
 }
