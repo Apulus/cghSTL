@@ -358,6 +358,88 @@ namespace CGH{
 #pragma endregion
 
 	#pragma endregion
+
+#pragma region copy_backward
+
+#pragma region 第一层：copy_backward 算法入口
+
+	/*
+		将 [ first,last ) 内的每一个元素，以逆行的方向复制到以 result - 1 为起点，方向也为逆行的区间上]
+		* ( result - 1 ) = * ( last - 1 ) ;
+		* ( result - 2 ) = * ( last - 2 ) ;
+		* ( result - 3 ) = * ( last - 3 ) ;
+		...
+	*/
+	template <class InputIterator, class OutputIterator>
+	inline OutputIterator copy_backward(InputIterator first, InputIterator last, OutputIterator result)
+	{
+		return copy_backward_dispatch<InputIterator, OutputIterator>()(first, last, result);
+	}
+
+#pragma endregion
+
+#pragma region 第二层：copy_backward_dispatch
+
+	template <class InputIterator, class OutputIterator>
+	struct copy_backward_dispatch
+	{
+		OutputIterator operator()(InputIterator first, InputIterator last, OutputIterator result)
+		{
+			return __copy_backward(first, last, result);
+		}
+	};
+
+	#pragma region copy_backward_dispatch 的特化版
+	template <class T>
+	struct copy_backward_dispatch<T*, T*>
+	{
+		T* operator()(T* first, T* last, T* result)
+		{
+			typedef typename cghSTL_type_traits<T>::has_trivial_assignment_operator t;
+			return __copy_backward_t(first, last, result, t());
+		}
+	};
+
+	template <class T>
+	struct copy_backward_dispatch<const T*, T*>
+	{
+		T* operator()(const T* first, const T* last, T* result)
+		{
+			typedef typename cghSTL_type_traits<T>::has_trivial_assignment_operator t;
+			return __copy_backward_t(first, last, result, t());
+		}
+	};
+	#pragma endregion
+
+#pragma endregion
+
+#pragma region 第三层
+
+	template <class InputIterator, class OutputIterator>
+	inline OutputIterator __copy_backward(OutputIterator first, InputIterator last, OutputIterator result)
+	{
+		while (first != last) *--result = *--last;
+		return result;
+	}
+
+	template <class T>
+	inline T* __copy_backward_t(const T* first, const T* last, T* result, true_type)
+	{
+		const ptrdiff_t N = last - first;
+		memmove(result - N, first, sizeof(T) * N);
+		return result - N;
+	}
+
+	template <class T>
+	inline T* __copy_backward_t(const T* first, const T* last, T* result,
+		false_type)
+	{
+		return __copy_backward(first, last, result);
+	}
+
+#pragma endregion
+
+#pragma endregion
 }
 
 #endif
