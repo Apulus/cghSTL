@@ -94,7 +94,7 @@ namespace CGH{
 	void iter_swap(ForwardIterator1 first, ForwardIterator2 last)
 	{
 		// iterator_traits：特性萃取机，获得迭代器指向的值类型
-		std::iterator_traits<ForwardIterator1>::value_type tmp = *first;
+		std::iterator_traits<ForwardIterator1>::valueTpe tmp = *first;
 		*first = *last;
 		*last = tmp;
 	}
@@ -243,6 +243,45 @@ namespace CGH{
 
 	#pragma endregion
 
+	#pragma region plus
+
+	template<class T = void>
+	struct plus : public binary_function<T, T, T>
+	{	
+		T operator()(const T& left, const T& right) const
+		{	
+			return (left + right);
+		}
+	};
+
+	#pragma endregion
+
+	#pragma region minus
+
+	template<class T = void>
+	struct minus : public binary_function<T, T, T>
+	{	
+		T operator()(const T& left, const T& right) const
+		{	
+			return (left - right);
+		}
+	};
+
+	#pragma endregion
+
+	#pragma region multiplies
+
+	template<class T = void>
+	struct multiplies : public binary_function<T, T, T>
+	{	
+		T operator()(const T& left, const T& right) const
+		{	
+			return (left * right);
+		}
+	};
+
+	#pragma endregion
+
 }
 
 namespace CGH{
@@ -300,8 +339,8 @@ namespace CGH{
 	struct copy_dispatch<T*, T*>{
 		T* operator()(T* first, T* last, T* result)
 		{
-			// 通过特性萃取机（cghSTL_type_traits），获得对象 assignment operator 类型
-			typedef typename cghSTL_type_traits<T>::has_trivial_assignment_operator	t;
+			// 通过特性萃取机（cghSTLTpe_traits），获得对象 assignment operator 类型
+			typedef typename cghSTLTpe_traits<T>::has_trivial_assignment_operator	t;
 			return _copy_t(first, last, result, t());
 		}
 	};
@@ -316,8 +355,8 @@ namespace CGH{
 	struct copy_dispatch<const T*, T*>{
 		T* operator()(T* first, T* last, T* result)
 		{
-			// 通过特性萃取机（cghSTL_type_traits），获得对象 assignment operator 类型
-			typedef typename cghSTL_type_traits<T>::has_trivial_assignment_operator	t;
+			// 通过特性萃取机（cghSTLTpe_traits），获得对象 assignment operator 类型
+			typedef typename cghSTLTpe_traits<T>::has_trivial_assignment_operator	t;
 			return _copy_t(first, last, result, t());
 		}
 	};
@@ -341,7 +380,7 @@ namespace CGH{
 	template<class RandomAccessIterator, class OutputIterator>
 	inline OutputIterator _copy(RandomAccessIterator first, RandomAccessIterator last, OutputIterator result, CGH::random_access_iterator_tag)
 	{
-		return _copy_d(first, last, result, distance_type(first)) ;
+		return _copy_d(first, last, result, distanceTpe(first)) ;
 	}
 
 	/* 如果对象拥有 non-trivial assignment operator 那么直接进行内存拷贝 */
@@ -409,7 +448,7 @@ namespace CGH{
 	{
 		T* operator()(T* first, T* last, T* result)
 		{
-			typedef typename cghSTL_type_traits<T>::has_trivial_assignment_operator t;
+			typedef typename cghSTLTpe_traits<T>::has_trivial_assignment_operator t;
 			return __copy_backward_t(first, last, result, t());
 		}
 	};
@@ -419,7 +458,7 @@ namespace CGH{
 	{
 		T* operator()(const T* first, const T* last, T* result)
 		{
-			typedef typename cghSTL_type_traits<T>::has_trivial_assignment_operator t;
+			typedef typename cghSTLTpe_traits<T>::has_trivial_assignment_operator t;
 			return __copy_backward_t(first, last, result, t());
 		}
 	};
@@ -445,8 +484,7 @@ namespace CGH{
 	}
 
 	template <class T>
-	inline T* __copy_backward_t(const T* first, const T* last, T* result,
-		false_type)
+	inline T* __copy_backward_t(const T* first, const T* last, T* result, false_type)
 	{
 		return __copy_backward(first, last, result);
 	}
