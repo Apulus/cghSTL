@@ -170,6 +170,36 @@ namespace CGH{
 	}
 #pragma endregion
 
+#pragma region transform
+
+	/* 将函数对象 op 作用于 [ first, last ) 中的每一个元素，并以其结果产生出一个新序列 */
+	template<class InputIterator, class OutputIterator, class UnaryOperation>
+	OutputIterator transform(InputIterator first, InputIterator last, OutputIterator result, UnaryOperation op)
+	{
+		for (; first != last; ++first, ++result)
+		{
+			*result = op(*first);
+		}
+		return result;
+	}
+
+	/* 
+		将函数对象 binary_op 作用于一对元素上
+		其中一个元素来源于 [ first1, last1 )，另一个元素来源于 [ first2, last2)
+		在 result 开始的位置依次存放结果
+		如果第二个序列的长度小于第一个序列，结果未知
+	*/
+	template<class InputIterator1, class InputIterator2, class OutputIterator, class BinaryOperation>
+	OutputIterator transform(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, OutputIterator result, BinaryOperation op)
+	{
+		for (; first1 != last1, ; ++first1, ++first2, ++result)
+		{
+			*result = op(*first1, *first2);
+		}
+		return result;
+	}
+#pragma endregion
+
 }
 
 #endif
