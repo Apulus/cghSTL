@@ -15,6 +15,7 @@
 #include "cghUtil.h"
 #include "cghSTL_type_traits.h"
 #include "cghSTL_iterator.h"
+#include "cghStl_funcbase.h"
 
 namespace CGH{
 
@@ -226,6 +227,19 @@ namespace CGH{
 		}
 		return cghPair<InputIterator1, InputIterator2>(first1, first2) ;
 	}
+
+	#pragma endregion
+
+	#pragma region less
+
+	template<class T = void>
+	struct less : public binary_function<T, T, bool>
+	{	
+		bool operator()(const T& left, const T& right) const
+		{
+			return (left < right);
+		}
+	};
 
 	#pragma endregion
 
