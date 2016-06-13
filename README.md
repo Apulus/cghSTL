@@ -22,6 +22,10 @@
         仿函数的实现位于 function objects 文件夹
         
         配接器的实现位于 adapters 文件夹
+        
+        所有的测试文件都放在 test 文件夹
+        
+        version 文件夹存放着各个时期的版本
 
 
 #使用方法
