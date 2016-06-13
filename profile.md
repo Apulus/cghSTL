@@ -8,11 +8,11 @@
 
 * 熟练使用 SQL server 数据库和 Oracle 数据库
 
-* 了解 TCP/IP、HTTP/HTTPS 协议
-
 * 喜欢系统底层原理，常用的 Linux 的发行版为 Ubuntu
 
 * 了解常用数据结构和算法
+
+* 了解 TCP/IP、HTTP/HTTPS 协议
 
 * 对数据库的底层实现着迷，略懂 oracle 数据库的体系结构
 
