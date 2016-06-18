@@ -1,4 +1,4 @@
-简单C++标准库（Standard Template Library）的实现
+简单C++标准模板库（Standard Template Library）的实现
 ==========================
 [STL 技术实现简要分析](http://blog.csdn.net/chengonghao/article/category/6216131 "CSDN")
 
