@@ -1,4 +1,4 @@
-![](https://github.com/apulus/cghSTL/profile_img.png)  
+![](https://github.com/apulus/cghSTL/profile_img.jpg)  
 #自我介绍
 我是一名四川大学的学生，目前在电子信息学院攻读硕士研究生，专业是*模式识别与智能系统*。热爱编程，具有一定的学习能力、动手能力、归纳总结能力。热爱运动，每天坚持跑步，周末常常夜跑（征服成都市一环无压力），也爱打篮球，看比赛。写日记好几年了，平时常在 [CSDN](http://blog.csdn.net/chengonghao?viewmode=list "我的博客") 记录学习历程。
 
