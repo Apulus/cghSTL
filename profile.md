@@ -5,7 +5,7 @@
 #技能树
 * 熟练使用 C/C++、C#、js
 
-* 熟悉 Web 前后端开发流程、关系型数据库设计、ASP.NET MVC、jQuery easyUI、bootstrap 等 Web 开发相关的库和框架，具有独立的，全栈开发 web 应用的能力
+* 熟悉 Web 前后端开发流程、关系型数据库设计、ASP.NET MVC、jQuery easyUI、bootstrap 等 Web 开发相关的库和框架，具有独立的，全栈开发 web 应用的能力。具有基本的，在 Linux 下开发和调试程序的能力。
 
 * 熟练使用 SQL server 数据库和 Oracle 数据库
 
